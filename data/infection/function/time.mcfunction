@@ -21,12 +21,12 @@ execute unless score period internal matches 2 store result bossbar infection:ma
 execute if score period internal matches -1 run bossbar set infection:main name "The games will begin shortly!"
 execute if score period internal matches -1 run bossbar set infection:main color white
 ## starter period (0)
-execute if score period internal matches 0 run bossbar set infection:main name ["",{"text":"Starter period \u0020 \u0020","color":"yellow"},{"score":{"name":"time_left","objective":"internal"},"color":"yellow","bold":true},{"text":" seconds left","color":"white"}]
+execute if score period internal matches 0 run bossbar set infection:main name ["",{"text":"Starter period    ","color":"yellow"},{"score":{"name":"time_left","objective":"internal"},"color":"yellow","bold":true},{"text":" seconds left","color":"white"}]
 execute if score period internal matches 0 run bossbar set infection:main color yellow
 execute if score period internal matches 0 store result bossbar infection:main max run scoreboard players get starter_period internal
 execute if score period internal matches 0 store result bossbar infection:main value run scoreboard players get time_s internal
 ## main period (2)
-execute if score period internal matches 2 run bossbar set infection:main name ["",{"text":"INFECTION","bold":true,"color":"dark_green"},{"text":"ALIVE: ","color":"dark_green"},{"score":{"name":"alive","objective":"internal"},"bold":true,"color":"green"},{"text":" \u0020 INFECTED: ","color":"dark_green"},{"score":{"name":"infected","objective":"internal"},"bold":true,"color":"green"},{"text":" \u0020 BORDER: ","color":"dark_green"},{"score":{"name":"border","objective":"internal"},"bold":true,"color":"green"}]
+execute if score period internal matches 2 run bossbar set infection:main name ["",{"text":"INFECTION","bold":true,"color":"dark_green"},{"text":"ALIVE: ","color":"dark_green"},{"score":{"name":"alive","objective":"internal"},"bold":true,"color":"green"},{"text":"   INFECTED: ","color":"dark_green"},{"score":{"name":"infected","objective":"internal"},"bold":true,"color":"green"},{"text":"   BORDER: ","color":"dark_green"},{"score":{"name":"border","objective":"internal"},"bold":true,"color":"green"}]
 execute if score period internal matches 2 run bossbar set infection:main color green
 execute if score period internal matches 2 store result bossbar infection:main max run scoreboard players get victory_timeout internal
 execute if score period internal matches 2 store result bossbar infection:main value run scoreboard players get time_s internal

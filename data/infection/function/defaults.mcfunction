@@ -40,8 +40,8 @@ scoreboard players set timer_speed global 20
 # world
 worldborder set 10
 worldborder damage buffer 45
-gamerule doImmediateRespawn true
-gamerule keepInventory false
+gamerule immediate_respawn true
+gamerule keep_inventory false
 difficulty peaceful
 
 

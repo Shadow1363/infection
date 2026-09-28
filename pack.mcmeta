@@ -1,6 +1,7 @@
 {
-    "pack": {
-        "description": "Infection for 1.19\n\u00A762023.0304 \u00A7r• \u00A7bplexion.dev",
-        "pack_format": 10
-    }
+  "pack": {
+    "description": "Infection for 26.3\n§62026.0928 §r• §bplexion.dev",
+    "min_format": 94,
+    "max_format": 121
+  }
 }

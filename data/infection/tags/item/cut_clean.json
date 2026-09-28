@@ -1,0 +1,15 @@
+{
+	"values":[
+		"minecraft:raw_iron",
+		"minecraft:raw_gold",
+		"minecraft:iron_ore",
+		"minecraft:gold_ore",
+		"minecraft:porkchop",
+		"minecraft:mutton",
+		"minecraft:beef",
+		"minecraft:chicken",
+		"minecraft:rabbit",
+		"minecraft:cod",
+		"minecraft:salmon"
+	]
+}

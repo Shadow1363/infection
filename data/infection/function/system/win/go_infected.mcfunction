@@ -13,7 +13,7 @@ execute as @a at @s run playsound minecraft:ui.toast.challenge_complete player @
 
 # fireworks
 effect give @a resistance 9999 255 true
-execute as @a at @s run summon firework_rocket ~ ~1 ~ {FireworksItem:{id:"minecraft:firework_rocket",Count:1,tag:{Fireworks:{Flight:1,Explosions:[{Type:1,Flicker:0,Trail:0,Colors:[I;5631086],FadeColors:[I;632656]}]}}}}
+execute as @a at @s run summon firework_rocket ~ ~1 ~ {FireworksItem:{id:"minecraft:firework_rocket",count:1,components:{"minecraft:fireworks":{flight_duration:1b,explosions:[{shape:"large_ball",colors:[I;5631086],fade_colors:[I;632656],has_trail:false,has_twinkle:false}]}}}}
 
 # effects
 effect give @a[tag=win] glowing 9999 255 true

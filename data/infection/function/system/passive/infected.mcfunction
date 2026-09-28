@@ -3,13 +3,13 @@
 
 
 # particles
-particle minecraft:block minecraft:lime_concrete_powder ~ ~0.8 ~ 0 0 0 0 2
+particle minecraft:block{block_state:"minecraft:lime_concrete_powder"} ~ ~0.8 ~ 0 0 0 0 2
 
 # health boost
 execute unless score period internal matches -1 run function infection:system/passive/health_boost
 
 # tracker compass
-execute as @s[nbt=!{Inventory:[{id:"minecraft:compass",tag:{survivor_compass:1b}}]}] at @s run function infection:system/passive/compass
+execute unless items entity @s container.* minecraft:compass[minecraft:custom_data~{survivor_compass:1b}] unless items entity @s weapon.offhand minecraft:compass[minecraft:custom_data~{survivor_compass:1b}] at @s run function infection:system/passive/compass
 
 # effects
 effect give @s saturation 9999 40 true
