@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Minecraft Java Edition **data pack** (no build system, no tests, no code other than `.mcfunction` and JSON). It runs a Halo-style "Infection" minigame: players gather resources during a starter period, then one random player is infected and must convert every survivor before the victory timer runs out. More info: https://l.plexion.dev/infection
 
-Targets **Java 26.3 (data pack format 121)**; `pack.mcmeta` declares `min_format` 94 (1.21.11, first version with snake_case gamerules) to `max_format` 121. It was ported from 1.19. `UPGRADE_PLAN.md` records every breaking change between those versions and how each was handled. Use modern syntax everywhere: singular folder names (`function/`, `tags/block/`), item components instead of item NBT, `execute if items` instead of `nbt=` item checks, SNBT text components (`hover_event`/`value`, `click_event`/`command`), snake_case gamerules.
+Targets **Java 26.3 (data pack format 121)**; `pack.mcmeta` declares `min_format` 94 (1.21.11, first version with snake_case gamerules) to `max_format` 121. It was ported from 1.19. `UPGRADE_PLAN.md` records every breaking change between those versions and how each was handled. Use modern syntax everywhere: singular folder names (`function/`, `tags/block/`), item components instead of item NBT, `execute if items` instead of `nbt=` item checks, SNBT text components (`hover_event`/`value`, `click_event`/`command`), snake_case gamerules, and `/trigger`-only click events (see Gotchas).
 
 ## Developing / testing
 
@@ -22,12 +22,14 @@ Releases are zipped as `Infection.zip` (gitignored). The version is the date str
 ## Architecture
 
 Two namespaces:
+
 - `infection:` — the game.
 - `fm:` — small shared helpers (a tick clock and a player counter).
 
 **Entry points** (`data/minecraft/tags/function/`): `load.json` → `infection:load` (creates objectives, teams, bossbar; runs `infection:defaults` once, guarded by `defaults internal`), `tick.json` → `infection:main` (runs every tick).
 
 **State lives entirely in scoreboards**, as fake players:
+
 - `<name> global` — user-configurable options (`cut_clean`, `speed_uhc`, `height_limit`, `glow_last_survivor`, `infected_speed_boost`, `alive_health_boost`, `patch_grindstone_exploit`, `timer_speed`). Defaults set in `defaults.mcfunction`.
 - `<name> internal` — runtime state (`period`, `time`, `time_s`, `alive`, `infected`, `victory_timeout`, `percentNN` stage latches, etc.) and constants (`100 internal`).
 - Per-player: `last_login` (tracks which period's effects/gamemode a player has already received, so late joiners get synced), `player.death` (deathCount), `player.height`, `setup` (trigger).
@@ -36,10 +38,11 @@ Two namespaces:
 
 **Teams**: `alive` and `infected`. Death during period 2 → `system/death/go` moves alive players to `infected` and regears them. `system/passive/health_boost` (run as each infected player, so it runs N times per tick) recomputes infected %, and on crossing each threshold latches `percentNN`, buffs survivors, shrinks the border, and resets `time_s` with a new `victory_timeout`.
 
-**Setup menu** (`setup/go.mcfunction`) is a hand-written `tellraw` UI. Each option has an enabled and disabled line with click events that call `setup/<option>/on|off`, which set the score and call `setup/sfx/on|off`, which re-render the menu. Adding an option means: a default in `defaults`, both tellraw lines in `setup/go`, an `on/off` pair under `setup/`, and the behavior (usually `extras/` + a guarded call in `main`).
+**Setup menu** (`setup/go.mcfunction`) is a hand-written `tellraw` UI. Each option has an enabled and disabled line. Their click events run `trigger setup set <N>`. `main` runs `setup/trigger` as that player while in the lobby (period -1), and it maps N to `setup/<option>/on|off`. Those set the score and call `setup/sfx/on|off`, which re-render the menu. Value map: `1` open menu, `x0`/`x1` = option off/on (10 height limit, 20 infected speed, 30 alive health, 40 glow, 60 cut clean, 70 speed UHC), `50`/`51` timer down/up, `100` start. Adding an option means: a default in `defaults`, both tellraw lines in `setup/go` using a new trigger value, the matching line in `setup/trigger`, an `on/off` pair under `setup/`, and the behavior (usually `extras/` + a guarded call in `main`).
 
 ## Gotchas
 
+- **Never use `/function` (or any command needing op) in a `click_event`.** Since 1.21.6 the client shows a "run this command?" yes/no confirmation screen for every click on a `run_command` whose command requires permission level >0 or can't be parsed. Players hit this on every setup-menu button. Clickable buttons must run `/trigger` (level 0) and be dispatched server-side. Side effect: any player, not just ops, can change options or start a game from the menu, but only during the lobby.
 - Everything in `main`/`time` runs every tick; prefer latching with a score over repeating effect/title commands where possible.
 - A block/item tag with an unknown ID (e.g. a renamed block) fails to load entirely. Every function that references it then fails to parse too, including the tick function via `#infection:safe`.
 - Cut clean (`extras/cut_clean` → `extras/cut_clean/smelt`) converts item entities in place by rewriting `Item.id`, so stack counts survive. Which items it converts is driven by `tags/item/cut_clean.json` and `cut_clean_double.json`.
